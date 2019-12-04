@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec4 vColor;
+    varying vec4 fColor;
+    uniform mat4 projection;
+
+    void main()
+    {
+        fColor = vColor;
+        gl_Position = projection * vPosition;
+        gl_PointSize = 2.0;
+    }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 fColor;
+    uniform int sfx;
+
+    void main()
+    {
+        if(sfx == 1)
+            gl_FragColor = vec4(gl_FragCoord.x/512.0,gl_FragCoord.y/512.0,1.0,gl_FragCoord.w);
+        else
+            gl_FragColor = fColor;
+	}
+</script>
+
+<script type="text/javascript" src="../Common/webgl-utils.js"></script>
+<script type="text/javascript" src="../Common/initShaders.js"></script>
+<script type="text/javascript" src="../Common/MV.js"></script>
+<script type="text/javascript" src="../Common/webgl-debug.js"></script>
+<script type="text/javascript" src="assign3.js"></script>
+<style>
+.key
+{
+    border: 1px solid black;
+    height: 30px;
+    width: 62px;
+    margin: 0;
+    vertical-align: center;
+    text-align: center;
+}
+.light
+{
+    border: 1px solid black;
+    height: 30px;
+    width: 30px;
+}
+html, body
+{
+    position: fixed; 
+    overflow:hidden;
+    width: 100%;
+}
+</style>
+</head>
+<body>
+<table>
+    <tr>
+        <td>
+            <canvas id="gl-canvas" width="400" height="400">
+                Oops ... your browser does not support the HTML5 canvas element
+            </canvas>
+        </td>
+        <td style='vertical-align:top'>
+            <table id='lights'>
+                <tr>
+                    <td class='light' style='background-color:lime'></td>
+                    <td>: Drawing Lines</td>
+                </tr>
+                <tr>
+                    <td class='light' style='background-color:blue'></td>
+                    <td>: Projecting Seed Polygon</td>
+                </tr>
+                <tr>
+                    <td class='light' style='background-color:blue'></td>
+                    <td>: By-Level Fractalization</td>
+                </tr>
+                <tr>
+                    <td class='light' style='background-color:blue'></td>
+                    <td>: Spray Paint Fractalization</td>
+                </tr>
+            </table>
+            <br>
+            <div id='fractalLevel'>Fractalization Levels : 8</div>
+            <br>
+            <div id='vertexCounter'>Vertex Count : 0</div>
+            <br>
+            IFS code:
+            <br>
+            <textarea readonly rows='8' cols='69' id='textbox'></textarea>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td class='key'>Q<br><small>Rotate Left</small></td>
+                    <td class='key'>W<br><small>Vertical Stretch</small></td>
+                    <td class='key'>E<br><small>Rotate Right</small></td>
+                    <td class='key'>-<br><small>Fewer Levels</small></td>
+                    <td class='key'>+<br><small>More Levels</small></td>
+                    <td class='key'>P<br><small>Spray Paint Fractal</small></td>
+                </tr>
+                <tr>
+                    <td class='key'>A<br><small>Horizontal Squish</small></td>
+                    <td class='key'>S<br><small>Vertical Squish</small></td>
+                    <td class='key'>D<br><small>Horizontal Stretch</small></td>
+                    <td></td>
+                    <td></td>
+                    <td class='key'>L<br><small>By-Level Fractal</small></td>
+                </tr>
+                <tr>
+                    <td class='key'>Z<br><small>Shrink</small></td>
+                    <td class='key'>X<br><small>Grow</small></td>
+                    <td class='key'>C<br><small>Previous</small></td>
+                    <td></td>
+                    <td class='key'>&uarr;<br><small>Nudge Up</small></td>
+                </tr>
+                <tr>
+                    <td colspan='3' class='key'>SPACE<br><small>Make Clone</small></td>
+                    <td class='key'>&larr;<br><small>Nudge Left</small></td>
+                    <td class='key'>&darr;<br><small>Nudge Down</small></td>
+                    <td class='key'>&rarr;<br><small>Nudge Right</small></td>
+                </tr>
+            </table>
+        </td>
+        <td style='vertical-align:top'>
+            <h2>Usage</h2>
+            <ul>
+                <li>
+                    Click points on the canvas to begin drawing a polygon. Use <b>ctrl-R</b> to 
+                    return to this step.</li>
+                <li>
+                    When you're happy with the polygon you've drawn, press <b>SPACE</b> to 
+                    bring up a green projection of the polygon. Pressing <b>SPACE</b> again 
+                    will clone the polygon onto the projection and add the transformation to 
+                    the IFS code. Use the controls listed in the corner to manipulate the 
+                    projections. You can return to this step by using the <b>SPACE</b> key at 
+                    any time.
+                </li>
+                <li>
+                    After you've placed some projections, press <b>P</b> to draw a spray-paint 
+                    fractalization of your transformations. The color of each point will
+                    reflect it's position on the canvas, which creates a smooth shading effect.
+                    The rendering of this scene is quite fast; so holding down <b>P</b>
+                    creates a dynamic heatmap effect.
+                </li>
+                <li>
+                    After you've placed some projections, you could instead draw a By-Level 
+                    fractalization with the <b>L</b> key. A random color is assigned to each 
+                    transformation of the fractal. Each polygon mixes its parent's color with 
+                    the color that was assigned to its last transformation. This effect 
+                    highlights the generational inheritance of each polygon. The depth of 
+                    fractalization can be modified with the <b>-</b> or <b>+</b> keys,
+                    before or after being drawn.
+                </li>
+            </ul>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
